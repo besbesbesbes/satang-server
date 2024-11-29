@@ -1,0 +1,130 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          Int      @id @default(autoincrement())
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamp(0)
+  role        Role     @default(USER)
+  username    String   @unique
+  displayName String   @map("display_name")
+  password    String
+  profilePic  String   @map("profile_pic")
+  email       String   @unique
+  startPage   Int      @map("start_page")
+  Trans       Trans[]
+  Acct        Acct[]
+  Cat         Cat[]
+  Trip        Trip[]
+
+  @@map("user")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model Trans {
+  id        Int        @id @default(autoincrement())
+  createdAt DateTime   @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt DateTime   @updatedAt @map("updated_at") @db.Timestamp(0)
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int        @map("user_id")
+  time      DateTime
+  type      TransType
+  memo      String?
+  TransSub  TransSub[]
+
+  @@map("trans")
+}
+
+enum TransType {
+  EXPENSE
+  INCOME
+  TRANSFER
+  ADJUST
+}
+
+model TransSub {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamp(0)
+  trans     Trans    @relation(fields: [transId], references: [id], onDelete: Cascade)
+  transId   Int      @map("trans_id")
+  acct      Acct     @relation(fields: [acctId], references: [id], onDelete: Cascade)
+  acctId    Int      @map("acct_id")
+  cat       Cat?     @relation(fields: [catId], references: [id], onDelete: Cascade)
+  catId     Int?     @map("cat_id")
+  trip      Trip?    @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  tripId    Int?     @map("trip_id")
+  isIn      Boolean  @map("is_in")
+  amt       Decimal
+
+  @@map("trans_sub")
+}
+
+model Acct {
+  id        Int        @id @default(autoincrement())
+  createdAt DateTime   @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt DateTime   @updatedAt @map("updated_at") @db.Timestamp(0)
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int        @map("user_id")
+  type      AcctType
+  name      String
+  icon      Int
+  color     Int
+  isActive  Boolean    @map("is_active")
+  TransSub  TransSub[]
+
+  @@map("acct")
+}
+
+enum AcctType {
+  CASH
+  SAVING
+  CARD
+  DEBTOR
+}
+
+model Cat {
+  id        Int        @id @default(autoincrement())
+  createdAt DateTime   @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt DateTime   @updatedAt @map("updated_at") @db.Timestamp(0)
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int        @map("user_id")
+  type      CatType
+  name      String
+  icon      Int
+  color     Int
+  isActive  Boolean    @map("is_active")
+  TransSub  TransSub[]
+
+  @@map("cat")
+}
+
+enum CatType {
+  INCOME
+  EXPENSE
+}
+
+model Trip {
+  id        Int        @id @default(autoincrement())
+  createdAt DateTime   @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt DateTime   @updatedAt @map("updated_at") @db.Timestamp(0)
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int        @map("user_id")
+  name      String
+  icon      Int
+  color     Int
+  isActive  Boolean    @map("is_active")
+  TransSub  TransSub[]
+
+  @@map("trip")
+}
