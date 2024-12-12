@@ -8,12 +8,10 @@ module.exports = tryCatch(async (req, res, next) => {
     createError(401, "Unauthorized");
   }
   const token = authorization.split(" ")[1];
-  console.log(token);
   if (!token) {
     createError(401, "Unauthorized");
   }
   const payload = jwt.verify(token, process.env.JWT_SECRET);
-  console.log(payload);
   const foundUser = await prisma.user.findUnique({
     where: {
       id: payload.id,

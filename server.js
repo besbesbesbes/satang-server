@@ -6,6 +6,7 @@ const notFound = require("./src/middlewares/not-found");
 const errorMiddleware = require("./src/middlewares/error");
 const authenticate = require("./src/middlewares/authenticate");
 const authRoute = require("./src/routes/auth-route");
+const transRoute = require("./src/routes/trans-route");
 
 //middleware
 app.use(cors());
@@ -13,6 +14,7 @@ app.use(express.json());
 
 //routing
 app.use("/api/auth", authRoute);
+app.use("/api/trans", authenticate, transRoute);
 app.use(notFound);
 app.use(errorMiddleware);
 
