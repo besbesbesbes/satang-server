@@ -7,6 +7,7 @@ const errorMiddleware = require("./src/middlewares/error");
 const authenticate = require("./src/middlewares/authenticate");
 const authRoute = require("./src/routes/auth-route");
 const transRoute = require("./src/routes/trans-route");
+const addtranRoute = require("./src/routes/addtran-route");
 
 //middleware
 app.use(cors());
@@ -15,11 +16,10 @@ app.use(express.json());
 //routing
 app.use("/api/auth", authRoute);
 app.use("/api/trans", authenticate, transRoute);
+app.use("/api/addtran", authenticate, addtranRoute);
 app.use(notFound);
 app.use(errorMiddleware);
 
 //start server
 const port = process.env.PORT || 8011;
 app.listen(port, () => console.log("Server on ", port));
-
-
