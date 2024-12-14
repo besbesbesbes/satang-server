@@ -41,9 +41,6 @@ module.exports.getAcct = tryCatch(async (req, res, next) => {
     where: {
       userId,
       isActive: true,
-      NOT: {
-        type: "DEBTOR",
-      },
     },
   });
   // Validate have acct
